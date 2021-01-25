@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
             GlobalScope.launch {
                 SlackNotification.sendMessage(
                     owner = "chatbot",
-                    message = "Hello, there just testing"
+                    message = "Hello, Better"
                 )
             }
         }
