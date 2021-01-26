@@ -12,7 +12,6 @@ import retrofit2.http.Url
 interface SlackApi {
 
     @FormUrlEncoded
-//    @POST(BuildConfig.SLACKIFY_STATUS_HOOK)
     @POST
     fun postSlackMessage(
         @Url url: String,
