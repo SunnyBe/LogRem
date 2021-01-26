@@ -10,12 +10,14 @@ object SlackNotification {
 
     suspend fun sendMessage(
         owner: String,
-        message: String
+        message: String,
+        url: String
     ): SlackEntity.SlackUploadResponse? {
         return withContext(Dispatchers.IO) {
             try {
                 val client = NetworkClient.apiService()
                 val uploadResp = client.postSlackMessage(
+                    url = url,
                     slackNotificationMessage = SlackEntity.SlackMessage(
                         owner = owner,
                         text = message

@@ -17,6 +17,7 @@ class MainActivity : AppCompatActivity() {
         binding.testAction.setOnClickListener {
             GlobalScope.launch {
                 SlackNotification.sendMessage(
+                    url = "https://hooks.slack.com/services/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",
                     owner = "chatbot",
                     message = "Hello, Better"
                 )
