@@ -10,7 +10,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object NetworkClient {
 
-    //    https://hooks.slack.com/services/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
     fun apiService(): SlackApi {
         val retrofitBuilder = Retrofit.Builder()
             .baseUrl("https://hooks.slack.com/services/")
