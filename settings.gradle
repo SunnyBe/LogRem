@@ -1,3 +1,4 @@
+include ':firebase'
 include ':slack'
 include ':app'
 rootProject.name = "LogRem Library"

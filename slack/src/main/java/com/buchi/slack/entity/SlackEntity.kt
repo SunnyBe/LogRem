@@ -12,6 +12,10 @@ sealed class SlackEntity {
                     + "' "
                     + "}")
         }
+        fun toTestBlocks(): String {
+            return "" +
+                    ""
+        }
     }
 
     data class SlackUploadResponse(
