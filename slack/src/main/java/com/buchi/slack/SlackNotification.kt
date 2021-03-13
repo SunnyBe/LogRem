@@ -3,7 +3,6 @@ package com.buchi.slack
 import android.util.Log
 import com.buchi.slack.entity.SlackBlocks
 import com.buchi.slack.entity.SlackEntity
-import com.buchi.slack.entity.SlackMessage
 import com.buchi.slack.entity.SlackText
 import com.buchi.slack.network.NetworkClient
 import kotlinx.coroutines.Dispatchers
@@ -11,98 +10,50 @@ import kotlinx.coroutines.withContext
 
 object SlackNotification {
 
-    suspend fun sendMessageCoroutine(
-        owner: String,
-        message: String,
-        url: String
-    ): SlackEntity.SlackUploadResponse? {
-        return withContext(Dispatchers.IO) {
-            try {
-                val client = NetworkClient.apiService()
-                val uploadResp = client.postSlackMessage(
-                    url = url,
-                    slackNotificationMessage = SlackText(
-                        type = null,
-                        owner = owner,
-                        message = message
-                    ).toJson()
-                ).execute()
-
-                if (uploadResp.isSuccessful) {
-                    Log.d(javaClass.simpleName, uploadResp.message() ?: "")
-                    SlackEntity.SlackUploadResponse(true, uploadResp.message())
-                } else {
-                    uploadResp.errorBody()?.string()?.let { msg ->
-                        Log.d(javaClass.simpleName, msg)
-                        SlackEntity.SlackUploadResponse(false, msg)
-                    }
-                }
-            } catch (ex: Throwable) {
-                ex.printStackTrace()
-                Log.d(javaClass.simpleName, "System error occurred")
-                SlackEntity.SlackUploadResponse(false, ex.message)
-            }
-        }
-    }
-
-    suspend fun sendMessageCoroutine(
+    fun sendMessage(
         message: SlackBlocks,
         url: String
     ): SlackEntity.SlackUploadResponse? {
-        return withContext(Dispatchers.IO) {
-            try {
-                val client = NetworkClient.apiService()
-                val uploadResp = client.postSlackMessage(
-                    url = url,
-                    slackNotificationMessage = message.toJson()
-                ).execute()
+        val client = NetworkClient.apiService()
+        val uploadResp = client.postSlackMessage(
+            url = url,
+            slackNotificationMessage = message.toJson()
+        ).execute()
 
-                if (uploadResp.isSuccessful) {
-                    Log.d(javaClass.simpleName, uploadResp.message() ?: "")
-                    SlackEntity.SlackUploadResponse(true, uploadResp.message())
-                } else {
-                    uploadResp.errorBody()?.string()?.let { msg ->
-                        Log.d(javaClass.simpleName, msg)
-                        SlackEntity.SlackUploadResponse(false, msg)
-                    }
-                }
-            } catch (ex: Throwable) {
-                ex.printStackTrace()
-                Log.d(javaClass.simpleName, "System error occurred")
-                SlackEntity.SlackUploadResponse(false, ex.message)
+        return if (uploadResp.isSuccessful) {
+            Log.d(javaClass.simpleName, uploadResp.message() ?: "")
+            SlackEntity.SlackUploadResponse(true, uploadResp.message())
+        } else {
+            uploadResp.errorBody()?.string()?.let { msg ->
+                Log.d(javaClass.simpleName, msg)
+                SlackEntity.SlackUploadResponse(false, msg)
             }
         }
     }
 
-    fun sendMessage(
-        owner: String,
-        message: String,
-        url: String
-    ): SlackEntity.SlackUploadResponse? {
-        return try {
-            val client = NetworkClient.apiService()
-            val uploadResp = client.postSlackMessage(
-                url = url,
-                slackNotificationMessage = SlackEntity.SlackMessage(
-                    owner = owner,
-                    text = message
-                )
-                    .toString()
-            ).execute()
+    /**
+     * Upload a very simple message to the specified slack web-hook url. All parameters are expected
+     * to be provided
+     * @param url of the web-hook app to send message to. Assumption is that consumer already have a
+     * web hook.
+     * @param owner of the message being sent. By default mobile-app is used
+     * @param message that would be sent to the configured channel while creating slack web-hook.
+     */
+    fun simpleMessage(url: String, owner: String = "mobile-app", message: String) {
+        val client = NetworkClient.apiService()
+        val uploadResp = client.postSlackMessage(
+            url = url,
+            slackNotificationMessage = SlackText.simpleText(owner, message)
+        ).execute()
 
-            if (uploadResp.isSuccessful) {
-                Log.d(javaClass.simpleName, uploadResp.message() ?: "")
-                SlackEntity.SlackUploadResponse(true, uploadResp.message())
-            } else {
-                uploadResp.errorBody()?.string()?.let { msg ->
-                    Log.d(javaClass.simpleName, msg)
-                    SlackEntity.SlackUploadResponse(false, msg)
-                }
+        if (uploadResp.isSuccessful) {
+            Log.d(javaClass.simpleName, uploadResp.message() ?: "")
+            SlackEntity.SlackUploadResponse(true, uploadResp.message())
+        } else {
+            uploadResp.errorBody()?.string()?.let { msg ->
+                Log.d(javaClass.simpleName, msg)
+                SlackEntity.SlackUploadResponse(false, msg)
             }
-        } catch (ex: Throwable) {
-            ex.printStackTrace()
-            Log.d(javaClass.simpleName, "System error occurred")
-            SlackEntity.SlackUploadResponse(false, ex.message)
         }
     }
 }

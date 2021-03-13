@@ -8,13 +8,9 @@ sealed class SlackEntity {
         override fun toString(): String {
             return ("{"
                     + "'username': '$owner',"
-                    + "'text':' " + text + ", "
+                    + "'text':' " + text + " "
                     + "' "
                     + "}")
-        }
-        fun toTestBlocks(): String {
-            return "" +
-                    ""
         }
     }
 
