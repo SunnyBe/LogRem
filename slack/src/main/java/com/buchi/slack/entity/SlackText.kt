@@ -55,7 +55,7 @@ data class SlackText(
             return headerText
         }
 
-        fun sectionText(vararg message: String): SlackText {
+        fun sectionText(vararg message: String, ): SlackText {
             val textList: MutableList<SlackText> = mutableListOf()
             message.forEach { text ->
                 textList.add(
@@ -91,6 +91,10 @@ data class SlackText(
                 type = SlackType.ACTIONS.name.toLowerCase(Locale.getDefault()),
                 elements = buttonsList
             )
+        }
+
+        fun simpleText(owner: String?, message: String): String {
+            return SlackText(owner = owner, message = message).toJson()
         }
     }
 }
